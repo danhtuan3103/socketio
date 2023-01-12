@@ -1,0 +1,49 @@
+body {
+    background-color: #ebeef4;
+}
+
+#wrapper {
+    width: 600px;
+    margin: auto;
+}
+
+#username {
+    background-color: transparent;
+    border: 1px solid #333
+
+}
+
+#left, #right{
+    min-height: 300px;
+}
+
+#left {
+    width: 30%;
+    float: left;
+    background-color: #f0f2d0;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+#right {
+    width: 70%;
+    float: right;
+    background-color: #d4f9f8;
+    display: flex;
+    flex-direction: column;
+}
+
+#sayhi {
+
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+
+}
+
+#list-msg {
+    background-color: #fcead4;
+    flex: 1;
+}
+

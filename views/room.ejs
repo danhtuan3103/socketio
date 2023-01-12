@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room</title>
+    <script src="jquery.js"></script>
+    <script src="socket.io/socket.io.js"></script>
+    <style>
+        .wapper {
+            margin-top: 20px;
+            display: flex;
+            /* justify-content: ; */
+        }
+
+        .left {
+            border: 1px solid #333;
+            width: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 200px;
+            
+        }
+
+        .room-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .right {
+            display: flex;
+            justify-content: space-between;
+
+            flex-direction: column;
+            flex:1;
+            background-color: rgb(145, 103, 103);
+            min-height: 500px;
+        }
+
+        .current-room {
+            color: rgb(72, 82, 191);
+            border: 1px solid #333;
+            height: 20px;
+            width: 200px;
+            text-align: center;
+            margin:0 auto;
+        }
+
+        .chat {
+            display: flex;
+            flex-direction: column;     
+
+            flex:1;
+
+        }
+
+        .chat-msg {
+            flex: 1;
+            margin: 0 20%;
+            padding: 0 20px;
+            background-color: rgb(31, 123, 176);
+        }
+
+        .input-block {
+            margin: 0 auto;
+        }
+
+        .link {
+            margin: 8px 0;
+            text-decoration: none;
+            color: #333;
+            cursor: pointer;
+        }
+
+        .link:hover {
+            color: red;
+        }
+        
+    </style>
+
+    <script>
+        var socket = io("http://localhost:4000");
+
+        socket.on('server-send-rooms', function (rooms) {
+            $('.room-list').html("")
+            rooms.map(room => {
+                let p = document.createElement('p');
+                p.classList.add('link');
+                p.innerHTML = room;
+                p.addEventListener('click', (e) => {
+                    socket.emit('join-room', e.target.textContent);
+                })
+                $('.room-list').append(p)
+
+            })
+        })
+
+        socket.on('server-send-current-room', (data) => {
+            $('.current-room').html(data);
+        })
+
+        socket.on('server-chat', (data) => {
+
+            $('.chat-msg').append(`<p> ${data.username} :: ${data.msg}</p>`)
+        })
+
+        socket.on('join-room', (str) => {
+            $('.chat-msg').append(`<p>${str}</p>`)
+
+        })
+
+    
+
+        $(document).ready(function() {
+            $('.create-btn').click(() => {
+                socket.emit('create-room', $('.room-name').val());
+            })
+
+            $('.send-btn').click(() => {
+                socket.emit('chat', $('.content').val());
+            })
+          
+        })
+
+
+       
+           
+
+    </script>
+
+    
+
+</head>
+<body>
+    <h2>Room</h2>
+
+    <div class='create-room'>
+        <input type="text" class="room-name"/>
+        <input type="button" class="create-btn" value="Create"/>
+    </div>
+
+    <div class='wapper'>
+        <div class="left">
+            <h3>Rooms</h3>
+            <div class='room-list'>
+            </div>
+        </div>
+        <div class='right'>
+            <h4 class='current-room'>
+
+            </h4>
+
+            <div class='chat'>
+                <div class='chat-msg'>
+                </div>
+
+                <div class='input-block'>
+                    <input type="text" class="content"/>
+                    <input type="button" class="send-btn" value="Send"/>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+
+    </script>
+</body>
+</html>

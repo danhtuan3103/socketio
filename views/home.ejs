@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="jquery.js"></script>
+    <script src="socket.io/socket.io.js"></script>
+    <style>
+        #red{
+            background-color: red;
+        }
+
+        #blue{
+            background-color: blue;
+        }
+
+        #yellow{
+            background-color: yellow;
+
+        }
+    </style>
+    <script>
+        var socket = io("http://localhost:4000");
+
+        socket.on('server-send-msg', (data) => {
+            $('.content').append(data + "---");
+        })
+
+        socket.on('server-send-color', (color) => {
+            $('body').css('background-color', color)
+        })
+
+        $(document).ready(function() {
+            $("#btn").click(()=> {
+                socket.emit("send-msg", "Send to other and me");
+            })
+
+            $("#btn-not").click(()=> {
+                socket.emit("send-msg-not", "Send to other");
+            })
+
+            $("#red").click(() => {
+                socket.emit("send-color", "red");
+            })
+
+            $("#blue").click(() => {
+                socket.emit("send-color", "blue");
+            })
+
+            $("#yellow").click(() => {
+                socket.emit("send-color", "yellow");
+            })
+
+            
+        })
+    </script>
+
+    
+</head>
+<body>
+    <h2>Hello, world!</h2>
+
+    <div>
+        <button id="btn">Send Message to all include own</button>
+        <button id="btn-not">Send Message to all not include own</button>
+    </div>
+
+    <div class="content"></div>
+
+    <div style="margin-top: 50px">
+        <button id="red">Red</button>
+        <button id="blue">Blue</button>
+        <button id="yellow">Yellow</button>
+    </div>
+
+    
+</body>
+</html>

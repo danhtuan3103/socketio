@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <script src="jquery.js"></script>
+    <script src="socket.io/socket.io.js"></script>
+    <link rel="stylesheet" href="styles.css">
+
+    <script>
+     var socket = io("http://localhost:4000");
+
+     socket.on('user-register-failed', () => {
+        alert('User registration failed');
+     })
+
+     socket.on('user-register-success', (data) => {
+        $('.current-user').html(data);
+        $('#loginForm').hide(2000);
+        $('#chatForm').show(1000);
+     })
+
+     socket.on('server-send-list-register-user', (data) => {
+        $("#box-content").html("");
+        data.forEach(function (item) {  
+            $('#box-content').append(`<p> ${item}</p>`);
+        })
+     })
+
+     socket.on('server-send-chat-msg', (data) => {
+        $('#list-msg').append(`<p>${data.username} :: ${data.content}</p>`);
+     } )
+
+     socket.on('focus-input', (data) => {
+        $('.text-focus').html(data);
+     } )
+
+    $(document).ready(() => {
+        $('#loginForm').show();
+        $('#chatForm').hide();
+
+        $('#btn-register').click(() => {
+            var username = $('#username').val();
+            socket.emit('chat-username' , username);
+        })
+
+        $('#btn-logout').click(() => {
+            $('#loginForm').show(2000);
+            $('#chatForm').hide(1000);
+
+            socket.emit('logout')
+        })
+
+        $('#btn-send').click(() => {
+            socket.emit('chat-mgs-send', $('#txt-msg').val());
+            $('#txt-msg').val('');
+        })
+
+        $('#txt-msg').focusin(() => {
+            socket.emit('focus-input')
+        })
+
+        $('#txt-msg').focusout(() => {
+            socket.emit('leave-input')
+
+        })
+    })
+    
+    </script>
+</head>
+<body>
+    <div id="wrapper">
+        <div id="loginForm">
+            <h3>What is your name ? </h3>
+            <input type="text" id="username" />
+            <input type="button" value="Register" id="btn-register"/>
+        </div>
+
+        <div id="chatForm">
+            <div id="left">
+                <h3 id="title">Users Online</h3>
+                <div id="box-content">
+                </div>
+            </div>
+            <div id="right">
+                <div id="sayhi">
+                    <p class="text-focus"></p>
+                    <div>
+
+                        Hello <span class="current-user"></span>
+                        <input type="button" value="Logout" id="btn-logout"/>
+                    </div>
+                </div>
+
+                <div id="list-msg">
+
+                </div>
+
+
+                <div>
+                    <input type="text" id="txt-msg"/>
+                    <input type="button" value="Send" id="btn-send"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List</title>
+    <script src="jquery.js"></script>
+    <script src="socket.io/socket.io.js"></script>
+    <style> 
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .info {
+            display: flex;
+            flex-direction: column;
+            width: 240px;
+        }
+
+        .list {
+            margin-top: 20px;
+            min-height: 500px;
+            width: 600px;
+            border-radius: 4px;
+            background-color: rgb(78, 198, 198);
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+
+        }
+
+        .infof {
+            display: flex;
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .infof > p {
+            border: 1px solid #333;
+            padding: 4px 12px;
+        } 
+    </style>
+
+    <script>
+        var socket = io("http://localhost:4000");
+
+        socket.on('send-list-cmt' , (data) => {
+            $('.list').html('')
+            for(let i = 0; i < data.length; i++) {
+                var cmtBox = ` <div class="infof">
+                                <p>${i + 1}</p>
+                                <p>${data[i].name}</p>
+                                <p>${data[i].cmt}</p>
+                             </div>`
+                $('.list').append(cmtBox)
+            }
+        })
+
+        $(document).ready(function () {
+            $('#btn').click(() => {
+                socket.emit('send-comment' , {
+                    name: $('#name').val(),
+                    cmt: $('#cmt').val()
+                })
+            })
+        })
+    </script>
+</head>
+<body>
+    <div class="info">
+        Name : <input type="text" id="name" />
+        Comment : <input type="text" id="cmt" />
+        <input type="button" id="btn" value="Send" />
+    </div>
+
+    <div class="list">
+  
+    </div>
+</body>
+</html>
